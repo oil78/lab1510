@@ -3,4 +3,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:App"]
+
+# Use shell form so $PORT is evaluated correctly at runtime
+CMD gunicorn --bind 0.0.0.0:${PORT} app:app
