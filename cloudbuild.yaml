@@ -23,3 +23,6 @@ steps:
           --images=app-image=${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
