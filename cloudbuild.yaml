@@ -1,0 +1,25 @@
+steps:
+  # 1. Build and push container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID'
+      - '.'
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID'
+
+  # 2. Create a Cloud Deploy release (this automatically deploys to 'dev')
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud deploy releases create rel-$BUILD_ID \
+          --delivery-pipeline=cloud-run-pipeline \
+          --region=${_REGION} \
+          --images=app-image=${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/run-artifacts/app:$BUILD_ID'
